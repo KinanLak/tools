@@ -1,0 +1,58 @@
+CXX = g++
+
+STD_VERSION = -std=c++17
+CXXFLAGS = -Wall -fcolor-diagnostics $(STD_VERSION)
+DEP_INCLUDE =
+DEP_LINKING =
+
+##################################
+### Liste des fichiers sources ###
+##################################
+EXECUTABLE = 
+SOURCES = 
+##################################
+
+# Répertoire source
+SRC_DIR = src
+# Répertoire des binaires
+BIN_DIR = bin
+# Répertoire des fichiers objets
+BUILD_DIR = build
+# Répertoire de debug
+DEBUG_DIR = debug
+
+# Chemin de l'exécutable
+EXECUTABLE_PATH = $(BIN_DIR)/$(EXECUTABLE)
+
+# Chemin de l'exécutable pour debug
+DEBUG_BUILD_DIR = $(DEBUG_DIR)/$(BUILD_DIR)
+DEBUG_BIN_DIR = $(DEBUG_DIR)/$(BIN_DIR)
+DEBUG_EXECUTABLE_PATH = $(DEBUG_BIN_DIR)/$(EXECUTABLE)
+
+
+# Génération de noms de fichiers objets correspondants
+OBJECTS = $(patsubst %.cpp,$(BUILD_DIR)/%.o,$(SOURCES))
+OBJECTS_DEBUG = $(patsubst %.cpp,$(DEBUG_BUILD_DIR)/%.o,$(SOURCES))
+
+# Règle générique pour la construction des fichiers objets
+$(BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(DEP_INCLUDE) -c -o $@ $<
+
+$(DEBUG_BUILD_DIR)/%.o: $(SRC_DIR)/%.cpp
+	$(CXX) $(CXXFLAGS) $(DEP_INCLUDE) -g -c -o $@ $<
+
+
+all: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(DEP_LINKING) -o $(EXECUTABLE_PATH) $^
+	$(EXECUTABLE_PATH)
+
+debug: $(OBJECTS_DEBUG)
+	$(CXX) $(CXXFLAGS) -g $(DEP_LINKING) -o $(DEBUG_EXECUTABLE_PATH) $^
+
+clean:
+	rm -f $(BUILD_DIR)/*.o $(EXECUTABLE_PATH)
+	rm -f $(DEBUG_BUILD_DIR)/*.o $(DEBUG_EXECUTABLE_PATH)
+
+.PHONY: clean debug all
+
+.DEFAULT_GOAL := all
