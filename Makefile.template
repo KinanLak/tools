@@ -1,8 +1,11 @@
 CXX = clang++
 STD_VERSION = -std=c++17
 CXXFLAGS = -Wall -Wextra
-DEP_INCLUDE =
-DEP_LINKING =
+
+DEP_INCLUDE = 
+DEP_LINKING = 
+
+#-D BOOST_TEST_DYN_LINK -lboost_unit_test_framework
 
 EXEC_NAME = 
 
@@ -17,6 +20,8 @@ BIN_DIR = bin
 BUILD_DIR = build
 # Répertoire de debug
 DEBUG_DIR = debug
+# Répertoire de test
+TEST_DIR = test
 
 # Chemin de l'exécutable
 EXECUTABLE_PATH = $(BIN_DIR)/$(EXEC_NAME)
@@ -45,6 +50,9 @@ all: $(OBJECTS)
 
 debug: $(OBJECTS_DEBUG)
 	$(CXX) $(CXXFLAGS) $(STD_VERSION) -g $(DEP_LINKING) -o $(DEBUG_EXECUTABLE_PATH) $^
+
+test: $(OBJECTS)
+	$(CXX) $(CXXFLAGS) $(STD_VERSION) $(DEP_LINKING) -D BOOST_TEST_DYN_LINK -lboost_unit_test_framework -o $(EXECUTABLE_PATH) $^
 
 clean:
 	rm -f $(BUILD_DIR)/*.o $(EXECUTABLE_PATH)
