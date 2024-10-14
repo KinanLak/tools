@@ -1,4 +1,4 @@
-#!/bin/zsh
+#!/bin/bash
 
 # Chemin complet du script
 script_path=$(realpath $0)
