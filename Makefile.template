@@ -1,4 +1,4 @@
-CXX = clang++
+CXX = g++
 STD_VERSION = -std=c++17
 CXXFLAGS = -Wall -Wextra
 

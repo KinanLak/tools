@@ -1,0 +1,97 @@
+#!/bin/bash
+
+# Chemin complet du script
+script_path=$(realpath $0)
+
+# Répertoire du script
+script_dir=$(dirname $script_path)
+
+# Modèles common.js
+template_common="${script_dir}/webpack/webpack.common.js"
+template_dev="${script_dir}/webpack/webpack.dev.js"
+template_prod="${script_dir}/webpack/webpack.prod.js"
+
+# Vérifier si les fichiers de configuration Webpack existent
+for template in "$template_common" "$template_dev" "$template_prod"; do
+    if [ ! -f "$template" ]; then
+        echo "Erreur : Le fichier $(basename $template) n'a pas été trouvé dans le même répertoire que le script."
+        exit 1
+    fi
+done
+# Créer les répertoires
+mkdir -p src src/images src/scripts src/stylesheets
+
+# Créer les fichiers styles et index
+touch src/index.js src/stylesheets/style.scss src/images/favicon.ico
+
+# Copier les fichiers Webpack dans le projet
+cp "$template_common" ./webpack.common.js
+cp "$template_dev" ./webpack.dev.js
+cp "$template_prod" ./webpack.prod.js
+
+# Vérifier si npm est installé
+if ! command -v npm &> /dev/null
+then
+    echo "Erreur : npm n'est pas installé. Veuillez installer npm pour continuer."
+    exit 1
+fi
+
+# Initialiser le projet npm
+npm init -y --author="Perez Alexandre"
+
+# Installer Webpack et Webpack CLI
+npm install --save-dev webpack webpack-cli webpack-dev-server
+
+# Installer d'autres dépendances comme Babel et loaders
+npm install --save-dev \
+babel-loader \
+@babel/core \
+@babel/preset-env \
+core-js \
+css-loader \
+html-es6-template-loader \
+html-webpack-plugin \
+material-icons \
+materialize-css \
+npm-check-updates \
+postcss-loader \
+postcss-nested \
+postcss-preset-env \
+resolve-url-loader \
+sass \
+sass-loader \
+style-loader \
+terser-webpack-plugin \
+webpack \
+webpack-cli \
+webpack-dev-server \
+webpack-merge
+
+
+# Créer un fichier .gitignore
+#echo "node_modules/" > .gitignore
+
+# Modifier le champ "author" dans package.json
+AUTHOR="Perez Alexandre" 
+
+# Ajouter la section "scripts" au package.json
+if command -v jq &> /dev/null
+then
+    jq --arg author "$AUTHOR" '.author = $author' package.json > tmp.$$.json && mv tmp.$$.json package.json
+    jq '.scripts = {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "webpack serve --open --config webpack.dev.js",
+      "build": "webpack --config webpack.prod.js"
+    }' package.json > tmp.$$.json && mv tmp.$$.json package.json
+    jq '.scripts = {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "webpack serve --open --config webpack.dev.js",
+      "build": "webpack --config webpack.prod.js"
+    }' package.json > tmp.$$.json && mv tmp.$$.json package.json
+else
+    echo "Erreur : jq n'est pas installé. Veuillez installer jq pour mettre à jour package.json."
+    exit 1
+fi
+
+# Message de confirmation
+echo "L'environnement Webpack a été configuré avec succès."
