@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# Script pour créer facilement un environnement Webpack
+
 # Chemin complet du script
 script_path=$(realpath $0)
 
@@ -72,7 +74,7 @@ webpack-merge
 #echo "node_modules/" > .gitignore
 
 # Modifier le champ "author" dans package.json
-AUTHOR="Perez Alexandre" 
+AUTHOR="Perez Alexandre"
 
 # Ajouter la section "scripts" au package.json
 if command -v jq &> /dev/null
